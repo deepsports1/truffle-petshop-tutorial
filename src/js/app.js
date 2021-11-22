@@ -50,6 +50,17 @@ App = {
 
       return App.markAdopted();
     })
+    $.getJSON('Migrations.json', function(data) {
+      var MigrationArtifact = data;
+      App.contracts.Migration = TruffleContract(MigrationArtifact);
+      App.contracts.Migration.setProvider(App.web3Provider)
+      App.contracts.Migration.deployed().then(function(instance) {
+        migrationInstance = instance;
+        migrationInstance.last_completed_migration.call().then(function(result) {
+          console.log("Last completed migration: " + result);
+        })
+      })
+    })
 
     return App.bindEvents();
   },
